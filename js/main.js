@@ -72,7 +72,7 @@ let keys = [];
 
 let gravity = 2600;
 
-let bumpJump = 1600;
+let bumpJump = 1700;
 
 // box
 let boxpx = 1520;
@@ -157,13 +157,20 @@ function initJump()
 
 function bumper()
 {
-    if (pvy == 0 &&
+    if ((pvy == 0 &&
         bottomLeftPx[0]  == 255 && 
         bottomLeftPx[1]    == 255 && 
         bottomLeftPx[2]    == 0 ||
         bottomRightPx[0]   == 255 &&
         bottomRightPx[1]   == 255 && 
-        bottomRightPx[2]   == 0
+        bottomRightPx[2]   == 0) ||
+        (pvy == 0 &&
+        bottomLeftSidePx[0]  == 255 && 
+        bottomLeftSidePx[1]    == 255 && 
+        bottomLeftSidePx[2]    == 0 ||
+        bottomRightSidePx[0]   == 255 &&
+        bottomRightSidePx[1]   == 255 && 
+        bottomRightSidePx[2]   == 0)
     )
         pvy = -bumpJump;
 }
@@ -222,11 +229,13 @@ function player()
     else if (pvy > 0){
         pvy = 0;
 
+        // verification des pixels
         ppx9 = ctxCollisionZone.getImageData((px + 1), (py + pHeight), 1, 1);
         bottomLeftPx2 = ppx9.data;
         ppx10 = ctxCollisionZone.getImageData((px + pWidth - 1), (py + pHeight), 1, 1);
         bottomRightPx2 = ppx10.data;
 
+        // remonte le personnage sur la plateforme
         while ((bottomLeftPx2[0]  == 255 && // vérification si sur du rouge (plateforme)
         bottomLeftPx2[1]    == 0 && 
         bottomLeftPx2[2]    == 0) ||
@@ -241,6 +250,7 @@ function player()
         bottomRightPx2[2]   == 0)){
             py -= 1;
 
+            // reverifie les pixels
             ppx9 = ctxCollisionZone.getImageData((px + 1), (py + pHeight), 1, 1);
             bottomLeftPx2 = ppx9.data;
             ppx10 = ctxCollisionZone.getImageData((px + pWidth - 1), (py + pHeight), 1, 1);
@@ -301,15 +311,15 @@ function box()
 
     boxpy += boxvy * dt;
 
-    if (moveRight == true && bgSpritex < 2500 - (W / 1.2) - 10){
+    if (moveRight == true && bgSpritex > -2500 + W + 10 && moveRight == true && px >= 100){
         // px += pvx * dt;
         boxpx -= pvx * dt;
     }
-    else if (moveRight == true && bgSpritex >= 2500 - (W / 1.2) - 10){
+    else if (moveRight == true && bgSpritex <= -2500 + W + 10 || moveRight == true && px < 100){
         // px += pvx * dt;
     }
 
-    if (moveLeft == true){
+    if (moveLeft == true && bgSpritex < 0  && moveLeft == true && px <= 100){
         // px -= pvx * dt;
         boxpx += pvx * dt;
     }
@@ -406,7 +416,7 @@ function playerMove()
         bgSpritex -= pvx * dt;
     }
     else if (moveRight == true && bgSpritex <= -2500 + W + 10 || moveRight == true && px < 100){
-        console.log("tf", px, W - pWidth);
+        // console.log("tf", px, W - pWidth);
         if (px < W - pWidth)
             px += pvx * dt;
         else
