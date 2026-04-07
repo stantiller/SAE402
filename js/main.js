@@ -3,28 +3,33 @@ let H = window.innerHeight;
 let W = window.innerWidth;
 
 // taille et selection des zones
-let collisionZone = document.getElementById("collisionZone");
-// let collisionZoneP = document.getElementById("collisionZoneP");
-let playerZone = document.getElementById("playerZone");
-let playZone = document.getElementById("playZone");
+const divMenu = document.getElementById("menu");
+const divWin = document.getElementById("winGame");
+const divLose = document.getElementById("loseGame");
+const collisionZone = document.getElementById("collisionZone");
+const playerZone = document.getElementById("playerZone");
+const playZone = document.getElementById("playZone");
 collisionZone.height = H;
 collisionZone.width = W;
-// collisionZoneP.height = H;
-// collisionZoneP.width = W;
 playerZone.height = H;
 playerZone.width = W;
 playZone.height = H;
 playZone.width = W;
 
 // variables de contexte
-let ctxCollisionZone = collisionZone.getContext("2d");
-// let ctxCollisionZoneP = collisionZoneP.getContext("2d");
-let ctxPlayerZone = playerZone.getContext("2d");
-let ctxPlayZone = playZone.getContext("2d");
+const ctxCollisionZone = collisionZone.getContext("2d");
+const ctxPlayerZone = playerZone.getContext("2d");
+const ctxPlayZone = playZone.getContext("2d");
+
+// win or lose
+let win = false;
+let lose = false;
 
 // background sprite
 const bgCollisions = new Image();
 bgCollisions.src = "img/hitboxBackground.png";
+const bgSprite = new Image();
+// bgSprite.src = "img/background.png";
 let bgSpritex = 0;
 let bgSpritey = 0;
 let bgSpriteSizex = 2500;
@@ -35,6 +40,7 @@ let pHeight = 55;
 let pWidth = 45;
 let px = 100;
 let py = H - 100 - pHeight;
+let gammaMove = 25;
 
 // pixels player
 let ppx1 = 0;
@@ -58,29 +64,35 @@ let bottomLeftPx2 = 0;
 let ppx10 = 0;
 let bottomRightPx2 = 0;
 
+// vitesses movements et jump player
 let pvx = 350;
 let pvy = 0;
-
 let pay = 0;
 let aJump = 1000;
 let falling = false;
-
 let moveRight = false;
 let moveLeft = false;
 let jumping = false;
 let keys = [];
 
 let gravity = 2600;
-
 let bumpJump = 1700;
 
 // box
 let boxpx = 1520;
 let boxpy = 50;
-let boxHeight = 100;
 let boxWidth = 150;
+let boxHeight = 100;
 let boxvx = 0;
 let boxvy = 0;
+
+// box sprite
+const boxSprite = new Image();
+boxSprite.src = "img/box.png";
+let boxSpritex = boxpx;
+let boxSpritey = boxpy;
+let boxSpriteWidth = boxWidth;
+let boxSpriteHeight = boxHeight;
 
 // pixels boite
 let ppxBox1 = 0;
@@ -102,9 +114,195 @@ let t0 = performance.now();
 let t1 = 0;
 let dt = 0;
 
+// window.addEventListener('resize', resize);
+// 
+// function resize()
+// {
+    // H = window.innerHeight;
+    // W = window.innerWidth;
+// }
+
+document.querySelectorAll(".start").forEach(e => {
+    e.addEventListener("click", startGame);
+});
+
+function startGame()
+{
+    affichageGame();
+
+    initGame();
+}
+
+function stopGame()
+{
+    window.cancelAnimationFrame(game);
+
+    if (win){
+        affichageWin();
+        win = false;
+    }
+    else if (lose){
+        affichageLose();
+        lose = false;
+    }
+    else
+        affichageMenu();
+}
+
+function affichageGame()
+{
+    divMenu.classList.add('invisible');
+    divWin.classList.add('invisible');
+    divLose.classList.add('invisible');
+
+    collisionZone.classList.remove('invisible');
+    playerZone.classList.remove('invisible');
+    playZone.classList.remove('invisible');
+}
+
+function affichageMenu()
+{
+    divMenu.classList.remove('invisible');
+    divWin.classList.add('invisible');
+    divLose.classList.add('invisible');
+
+    collisionZone.classList.add('invisible');
+    playerZone.classList.add('invisible');
+    playZone.classList.add('invisible');
+
+    // document.querySelectorAll(".start").forEach(e => {
+        // e.addEventListener("click", startGame);
+    // });
+}
+
+function affichageWin()
+{
+    divMenu.classList.add('invisible');
+    divWin.classList.remove('invisible');
+    divLose.classList.add('invisible');
+
+    collisionZone.classList.add('invisible');
+    playerZone.classList.add('invisible');
+    playZone.classList.add('invisible');
+
+    // document.querySelectorAll(".start").forEach(e => {
+        // e.addEventListener("click", startGame);
+    // });
+}
+
+function affichageLose()
+{
+    divMenu.classList.add('invisible');
+    divWin.classList.add('invisible');
+    divLose.classList.remove('invisible');
+
+    collisionZone.classList.add('invisible');
+    playerZone.classList.add('invisible');
+    playZone.classList.add('invisible');
+
+    // document.querySelectorAll(".start").forEach(e => {
+        // e.addEventListener("click", startGame);
+    // });
+}
+
+function initGame()
+{
+    // win or lose
+    win = false;
+    lose = false;
+
+    // sprite background
+    bgSpritex = 0;
+    bgSpritey = 0;
+    bgSpriteSizex = 2500;
+    bgSpriteSizey = H;
+
+    // position player
+    px = 100;
+    py = H - 100 - pHeight;
+
+    // pixels player
+    bottomLeftPx = 0;
+    bottomRightPx = 0;
+    middleLeftPx = 0;
+    middleRightPx = 0;
+    topLeftPx = 0;
+    topRightPx = 0;
+    bottomLeftSidePx = 0;
+    bottomRightSidePx = 0;
+    bottomLeftPx2 = 0;
+    bottomRightPx2 = 0;
+
+    // vitesses mouvements et jump player
+    pvx = 350;
+    pvy = 0;
+    pay = 0;
+    falling = false;
+    moveRight = false;
+    moveLeft = false;
+    jumping = false;
+    keys = [];
+
+    // box position et vitesses
+    boxpx = 1520;
+    boxpy = 50;
+    boxvx = 0;
+    boxvy = 0;
+
+    // box sprite
+    boxSpritex = boxpx;
+    boxSpritey = boxpy;
+
+    // pixels boite
+    bottomLeftBoxPx = 0;
+    bottomRightBoxPx = 0;
+    bottomLeftBoxPx2 = 0;
+    bottomRightBoxPx2 = 0;
+
+    oldBgx = 0;
+    newBgx = 0;
+    boxdpx = 0;
+
+    boxpay = 0;
+
+    t0 = performance.now();
+    t1 = 0;
+    dt = 0;
+
+    game();
+}
+
+function conditionWin()
+{
+    if (bottomLeftSidePx[0]  == 0 && // vérification si sur du vert (gagné)
+        bottomLeftSidePx[1]    == 255 && 
+        bottomLeftSidePx[2]    == 0 ||
+        bottomRightSidePx[0]   == 0 &&
+        bottomRightSidePx[1]   == 255 && 
+        bottomRightSidePx[2]   == 0){
+
+        win = true;
+        stopGame();
+    }
+}
+
+function conditionLose()
+{
+    if (bottomLeftPx[0]  == 255 && // vérification si sur du violet (perdu)
+        bottomLeftPx[1]    == 0 && 
+        bottomLeftPx[2]    == 255 ||
+        bottomRightPx[0]   == 255 &&
+        bottomRightPx[1]   == 0 && 
+        bottomRightPx[2]   == 255 ||
+        py + pHeight >= H){
+
+        lose = true;
+        stopGame();
+    }
+}
 
 function game() {
-
+    
     variablesTemps();
 
     affichage();
@@ -115,10 +313,18 @@ function game() {
 
     bumper();
 
-    window.addEventListener("click", initJump);
+    conditionWin();
 
+    conditionLose();
+
+    // controles pc
+    window.addEventListener("mousedown", initJump);
     window.addEventListener("keydown", startMoving);
     window.addEventListener("keyup", stopMoving);
+
+    // controles mobile
+    window.addEventListener("touchstart", initJump);
+    window.addEventListener("deviceorientation", playerControl, true);
 
     window.requestAnimationFrame(game);
 }
@@ -132,6 +338,13 @@ function variablesTemps(){
 }
 
 function affichage()
+{
+    affichageCollisions();
+
+    affichageSprites();
+}
+
+function affichageCollisions()
 {
     ctxCollisionZone.clearRect(0, 0, W, H);
     ctxPlayerZone.clearRect(0, 0, W, H);
@@ -147,6 +360,17 @@ function affichage()
 
     // fond
     ctxCollisionZone.drawImage(bgCollisions, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
+}
+
+function affichageSprites()
+{
+    // fond
+    // ctxPlayZone.drawImage(bgSprite, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
+
+    // box
+    boxSpritex = boxpx;
+    boxSpritey = boxpy;
+    ctxPlayerZone.drawImage(boxSprite, boxSpritex, boxSpritey, boxSpriteWidth, boxSpriteHeight);
 }
 
 function initJump()
@@ -311,11 +535,11 @@ function box()
 
     boxpy += boxvy * dt;
 
-    if (moveRight == true && bgSpritex > -2500 + W + 10 && moveRight == true && px >= 100){
+    if (moveRight == true && bgSpritex > - bgSpriteSizex + W + 10 && moveRight == true && px >= 100){
         // px += pvx * dt;
         boxpx -= pvx * dt;
     }
-    else if (moveRight == true && bgSpritex <= -2500 + W + 10 || moveRight == true && px < 100){
+    else if (moveRight == true && bgSpritex <= - bgSpriteSizex + W + 10 || moveRight == true && px < 100){
         // px += pvx * dt;
     }
 
@@ -325,6 +549,28 @@ function box()
     }
 }
 
+function playerControl(event)
+{
+    let gamma = event.gamma;
+    let beta = event.beta;
+
+    // console.log(gamma, beta);
+
+    // activer mouvement
+    if (gamma > gammaMove)
+        moveRight = true;
+    if (gamma < -gammaMove)
+        moveLeft = true;
+    
+    // desactiver mouvement
+    if (gamma < gammaMove)
+        moveRight = false;
+    if (gamma > -gammaMove)
+        moveLeft = false;
+    
+}
+
+// fonction pour commencer a bouger avec touches pc
 function startMoving(event)
 {
     let index = keys.indexOf(event.key);
@@ -337,13 +583,20 @@ function startMoving(event)
             case "ArrowRight":
                 moveRight = true;
                 break;
+            case "d":
+                moveRight = true;
+                break;
             case "ArrowLeft":
+                moveLeft = true;
+                break;
+            case "q":
                 moveLeft = true;
                 break;
         }
     }   
 }
 
+// fonction pour arreter de bouger avec touches pc
 function stopMoving(event)
 {
     let index = keys.indexOf(event.key);
@@ -355,7 +608,13 @@ function stopMoving(event)
         case "ArrowRight":
             moveRight = false;
             break;
+        case "d":
+            moveRight = false;
+            break;
         case "ArrowLeft":
+            moveLeft = false;
+            break;
+        case "q":
             moveLeft = false;
             break;
     }
@@ -392,6 +651,9 @@ function playerMove()
         middleRightPx[2]    == 0 ||
         topRightPx[0]  == 255 &&
         topRightPx[1]    == 0 && 
+        topRightPx[2]    == 0 ||
+        topRightPx[0]  == 0 && // vérification si sur du vert (fin de map)
+        topRightPx[1]    == 255 && 
         topRightPx[2]    == 0)
         moveRight = false;
     else if (bottomRightSidePx[0]  == 255 && // vérification si sur du orange (box)
@@ -411,16 +673,19 @@ function playerMove()
         else
             moveRight = false;
 
-    if (moveRight == true && bgSpritex > -2500 + W + 10 && moveRight == true && px >= 100){
+    if (moveRight == true && bgSpritex > - bgSpriteSizex + W + 10 && moveRight == true && px >= 100){
         // px += pvx * dt;
         bgSpritex -= pvx * dt;
     }
-    else if (moveRight == true && bgSpritex <= -2500 + W + 10 || moveRight == true && px < 100){
+    else if (moveRight == true && bgSpritex <= - bgSpriteSizex + W + 10 || moveRight == true && px < 100){
         // console.log("tf", px, W - pWidth);
         if (px < W - pWidth)
             px += pvx * dt;
         else
             px += W - pWidth;
+    }
+    else if (moveLeft == true && px >= W - pWidth){
+        px = W - pWidth;
     }
 
     if (moveLeft == true && bgSpritex < 0  && moveLeft == true && px <= 100){
@@ -432,6 +697,9 @@ function playerMove()
             px -= pvx * dt;
         else
             px = 0;
+    }
+    else if (moveLeft == true && px <= 0){
+        px = 0;
     }
 }
 

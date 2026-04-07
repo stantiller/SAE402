@@ -13,14 +13,35 @@
             margin: 0px;
             overflow: hidden;
         }
+        canvas{
+            position: absolute;
+        }
+        /* #collisionZone{
+            visibility: hidden;
+        } */
+        .invisible{
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <canvas id="collisionZone" class="invisible"></canvas>
+    <canvas id="playerZone" class="invisible"></canvas>
+    <canvas id="playZone" class="invisible"></canvas>
 
-    <canvas id="collisionZone"></canvas>
-    <canvas id="collisionZoneP"></canvas>
-    <canvas id="playerZone"></canvas>
-    <canvas id="playZone"></canvas>
+    <div id="menu">
+        <h1>bienvenu</h1>
+        <div class="start">commencer</div>
+    </div>
+
+    <div id="loseGame" class="invisible">
+        <h1>vous avez perdu</h1>
+        <div class="start">réessayer</div>
+    </div>
+
+    <div id="winGame" class="invisible">
+        <h1>vous avez gagné</h1>
+    </div>
     
     <script src="js/main.js"></script>
 </body>
