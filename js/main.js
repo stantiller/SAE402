@@ -75,8 +75,8 @@ let moveLeft = false;
 let jumping = false;
 let keys = [];
 
-let gravity = 2600;
-let bumpJump = 1700;
+let gravity = 2500;
+let bumpJump = 1650;
 
 // box
 let boxpx = 1520;
@@ -88,6 +88,7 @@ let boxvy = 0;
 
 // player sprite
 let retourner = false;
+let pushing = false;
 let runEtape = 0;
 let runInterval = -1;
 const playerSpriteRight = new Image();
@@ -100,6 +101,7 @@ let playerSpritex = px;
 let playerSpritey = py;
 let playerSpriteWidth = pWidth;
 let playerSpriteHeight = pHeight;
+// vers droite
 // idle
 let prIdlex = 52;
 let prIdley = 416;
@@ -111,7 +113,10 @@ let prJumpy = 426;
 let prJumpWidth = pClipWidth;
 let prJumpHeight = pClipHeight;
 // pushing
-
+let prPushx = 655;
+let prPushy = 793;
+let prPushWidth = pClipWidth;
+let prPushHeight = pClipHeight;
 // running
 let prRun0x = 67;
 let prRun0y = 41;
@@ -125,6 +130,35 @@ let prRun2x = 620;
 let prRun2y = 41;
 let prRun2Width = pClipWidth;
 let prRun2Height = pClipHeight;
+// vers gauche
+// idle
+let plIdlex = 622;
+let plIdley = 416;
+let plIdleWidth = pClipWidth;
+let plIdleHeight = pClipHeight;
+// jumping
+let plJumpx = 34;
+let plJumpy = 426;
+let plJumpWidth = pClipWidth;
+let plJumpHeight = pClipHeight;
+// pushing
+let plPushx = 655;
+let plPushy = 793;
+let plPushWidth = pClipWidth;
+let plPushHeight = pClipHeight;
+// running
+let plRun0x = 603;
+let plRun0y = 41;
+let plRun0Width = pClipWidth;
+let plRun0Height = pClipHeight;
+let plRun1x = 320;
+let plRun1y = 41;
+let plRun1Width = pClipWidth;
+let plRun1Height = pClipHeight;
+let plRun2x = 56;
+let plRun2y = 41;
+let plRun2Width = pClipWidth;
+let plRun2Height = pClipHeight;
 
 // box sprite
 const boxSprite = new Image();
@@ -405,7 +439,41 @@ function affichageSprites()
     playerSpritex = px;
     playerSpritey = py;
     if (retourner){
-        
+        if (jumping){
+            ctxPlayerZone.drawImage(playerSpriteLeft, 
+            plJumpx, plJumpy, plJumpWidth, plJumpHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
+        else if (pushing){
+            ctxPlayerZone.drawImage(playerSpriteLeft, 
+            plPushx, plPushy, plPushWidth, plPushHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
+        else if (moveLeft){
+            if (runInterval < 0)
+                runInterval = setInterval(running, 150);
+
+            if (runEtape == 0){
+                ctxPlayerZone.drawImage(playerSpriteLeft, 
+                plRun0x, plRun0y, plRun0Width, plRun0Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+            else if (runEtape == 1){
+                ctxPlayerZone.drawImage(playerSpriteLeft, 
+                plRun1x, plRun1y, plRun1Width, plRun1Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+            else if (runEtape == 2){
+                ctxPlayerZone.drawImage(playerSpriteLeft, 
+                plRun2x, plRun2y, plRun2Width, plRun2Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+        }
+        else{
+            ctxPlayerZone.drawImage(playerSpriteLeft, 
+            plIdlex, plIdley, plIdleWidth, plIdleHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
     }
     else{
         if (jumping){
@@ -415,7 +483,7 @@ function affichageSprites()
         }
         else if (pushing){
             ctxPlayerZone.drawImage(playerSpriteRight, 
-            prJumpx, prJumpy, prJumpWidth, prJumpHeight, 
+            prPushx, prPushy, prPushWidth, prPushHeight, 
             playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
         }
         else if (moveRight){
@@ -443,7 +511,6 @@ function affichageSprites()
             prIdlex, prIdley, prIdleWidth, prIdleHeight, 
             playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
         }
-
     }
 }
 
@@ -710,6 +777,8 @@ function stopMoving(event)
 
 function playerMove()
 {
+    pushing = false
+    pvx = 325;
     if (bottomLeftSidePx[0]  == 255 && // vérification si sur du rouge (plateforme)
         bottomLeftSidePx[1]    == 0 && 
         bottomLeftSidePx[2]    == 0 ||
@@ -754,9 +823,14 @@ function playerMove()
         topRightPx[1]    == 126 && 
         topRightPx[2]    == 0)
         if (moveRight == true){
-            bgSpritex -= (pvx / 2) * dt;
-            boxpx += (pvx / 2) * dt;
-            moveRight = false;
+            // bgSpritex -= (pvx / 1.5) * dt;
+            // boxpx += (pvx / 1.5) * dt;
+            // moveRight = false;
+
+            pvx = 325 / 2.5;
+            boxpx = px + pWidth;
+
+            pushing = true;
         }
         else
             moveRight = false;
