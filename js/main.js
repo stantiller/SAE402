@@ -29,18 +29,18 @@ let lose = false;
 const bgCollisions = new Image();
 bgCollisions.src = "img/hitboxBackground.png";
 const bgSprite = new Image();
-// bgSprite.src = "img/background.png";
+bgSprite.src = "img/platforms.png";
 let bgSpritex = 0;
 let bgSpritey = 0;
 let bgSpriteSizex = 2500;
 let bgSpriteSizey = H;
 
 // player
-let pHeight = 55;
-let pWidth = 45;
+let pHeight = 95;
+let pWidth = 55;
 let px = 100;
 let py = H - 100 - pHeight;
-let gammaMove = 25;
+let gammaMove = 20;
 
 // pixels player
 let ppx1 = 0;
@@ -85,6 +85,46 @@ let boxWidth = 150;
 let boxHeight = 100;
 let boxvx = 0;
 let boxvy = 0;
+
+// player sprite
+let retourner = false;
+let runEtape = 0;
+let runInterval = -1;
+const playerSpriteRight = new Image();
+playerSpriteRight.src = "img/GTSpritesheet.png"; // regarde à droite
+const playerSpriteLeft = new Image();
+playerSpriteLeft.src = "img/GTSpritesheetRev.png"; // regarde a gauche
+let pClipWidth = 220;
+let pClipHeight = 345;
+let playerSpritex = px;
+let playerSpritey = py;
+let playerSpriteWidth = pWidth;
+let playerSpriteHeight = pHeight;
+// idle
+let prIdlex = 52;
+let prIdley = 416;
+let prIdleWidth = pClipWidth;
+let prIdleHeight = pClipHeight;
+// jumping
+let prJumpx = 638;
+let prJumpy = 426;
+let prJumpWidth = pClipWidth;
+let prJumpHeight = pClipHeight;
+// pushing
+
+// running
+let prRun0x = 67;
+let prRun0y = 41;
+let prRun0Width = pClipWidth;
+let prRun0Height = pClipHeight;
+let prRun1x = 347;
+let prRun1y = 41;
+let prRun1Width = pClipWidth;
+let prRun1Height = pClipHeight;
+let prRun2x = 620;
+let prRun2y = 41;
+let prRun2Width = pClipWidth;
+let prRun2Height = pClipHeight;
 
 // box sprite
 const boxSprite = new Image();
@@ -169,10 +209,6 @@ function affichageMenu()
     collisionZone.classList.add('invisible');
     playerZone.classList.add('invisible');
     playZone.classList.add('invisible');
-
-    // document.querySelectorAll(".start").forEach(e => {
-        // e.addEventListener("click", startGame);
-    // });
 }
 
 function affichageWin()
@@ -184,10 +220,6 @@ function affichageWin()
     collisionZone.classList.add('invisible');
     playerZone.classList.add('invisible');
     playZone.classList.add('invisible');
-
-    // document.querySelectorAll(".start").forEach(e => {
-        // e.addEventListener("click", startGame);
-    // });
 }
 
 function affichageLose()
@@ -199,10 +231,6 @@ function affichageLose()
     collisionZone.classList.add('invisible');
     playerZone.classList.add('invisible');
     playZone.classList.add('invisible');
-
-    // document.querySelectorAll(".start").forEach(e => {
-        // e.addEventListener("click", startGame);
-    // });
 }
 
 function initGame()
@@ -347,11 +375,9 @@ function affichage()
 function affichageCollisions()
 {
     ctxCollisionZone.clearRect(0, 0, W, H);
-    ctxPlayerZone.clearRect(0, 0, W, H);
-    ctxPlayZone.clearRect(0, 0, W, H);
 
     // player
-    ctxCollisionZone.fillStyle = "black";
+    ctxCollisionZone.fillStyle = "lightgrey";
     ctxCollisionZone.fillRect(px, py, pWidth, pHeight);
 
     // box
@@ -364,19 +390,82 @@ function affichageCollisions()
 
 function affichageSprites()
 {
+    ctxPlayerZone.clearRect(0, 0, W, H);
+    ctxPlayZone.clearRect(0, 0, W, H);
+
     // fond
-    // ctxPlayZone.drawImage(bgSprite, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
+    ctxPlayZone.drawImage(bgSprite, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
 
     // box
     boxSpritex = boxpx;
     boxSpritey = boxpy;
     ctxPlayerZone.drawImage(boxSprite, boxSpritex, boxSpritey, boxSpriteWidth, boxSpriteHeight);
+
+    // player
+    playerSpritex = px;
+    playerSpritey = py;
+    if (retourner){
+        
+    }
+    else{
+        if (jumping){
+            ctxPlayerZone.drawImage(playerSpriteRight, 
+            prJumpx, prJumpy, prJumpWidth, prJumpHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
+        else if (pushing){
+            ctxPlayerZone.drawImage(playerSpriteRight, 
+            prJumpx, prJumpy, prJumpWidth, prJumpHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
+        else if (moveRight){
+            if (runInterval < 0)
+                runInterval = setInterval(running, 150);
+
+            if (runEtape == 0){
+                ctxPlayerZone.drawImage(playerSpriteRight, 
+                prRun0x, prRun0y, prRun0Width, prRun0Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+            else if (runEtape == 1){
+                ctxPlayerZone.drawImage(playerSpriteRight, 
+                prRun1x, prRun1y, prRun1Width, prRun1Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+            else if (runEtape == 2){
+                ctxPlayerZone.drawImage(playerSpriteRight, 
+                prRun2x, prRun2y, prRun2Width, prRun2Height, 
+                playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+            }
+        }
+        else{
+            ctxPlayerZone.drawImage(playerSpriteRight, 
+            prIdlex, prIdley, prIdleWidth, prIdleHeight, 
+            playerSpritex, playerSpritey, playerSpriteWidth, playerSpriteHeight);
+        }
+
+    }
+}
+
+function running()
+{
+    if (runEtape < 2)
+        runEtape += 1;
+    else
+        runEtape = 0;
+
+    if(moveRight == false && moveLeft == false){
+        clearInterval(runInterval);
+        runInterval = -1;
+        runEtape = 0;
+    }
 }
 
 function initJump()
 {
-    if (pvy == 0)
+    if (pvy == 0){
         pvy = -aJump;  // Impulsion de saut fixe (indépendante du dt)
+    }
 }
 
 function bumper()
@@ -396,7 +485,7 @@ function bumper()
         bottomRightSidePx[1]   == 255 && 
         bottomRightSidePx[2]   == 0)
     )
-        pvy = -bumpJump;
+    pvy = -bumpJump;
 }
 
 function player()
@@ -421,11 +510,8 @@ function player()
     ppx8 = ctxCollisionZone.getImageData((px + pWidth + 1), (py + pHeight - 5), 1, 1);
     bottomRightSidePx = ppx8.data;
 
-    // if (jumping){
-        // pay = gravity - aJump;
-    // }
-    // else
-        pay = gravity;
+
+    pay = gravity;
 
     if (!(bottomLeftPx[0]  == 255 && // vérification si sur du rouge (plateforme)
     bottomLeftPx[1]    == 0 && 
@@ -445,6 +531,7 @@ function player()
     bottomRightPx[0]   == 255 &&
     bottomRightPx[1]   == 126 && 
     bottomRightPx[2]   == 0)){
+        jumping = true;
         if (py < 0)
             pvy = pay * dt;
         else
@@ -452,6 +539,7 @@ function player()
     }
     else if (pvy > 0){
         pvy = 0;
+        jumping = false;
 
         // verification des pixels
         ppx9 = ctxCollisionZone.getImageData((px + 1), (py + pHeight), 1, 1);
@@ -701,31 +789,10 @@ function playerMove()
     else if (moveLeft == true && px <= 0){
         px = 0;
     }
+
+    // direction sprite
+    if (moveRight == true)
+        retourner = false;
+    else if (moveLeft == true)
+        retourner = true;
 }
-
-
-// données gyroscope et variables de mouvement
-// function playerControl(event)
-// {
-//     let gamma = event.gamma;
-//     let beta = event.beta;
-//     // console.log(gamma, beta);
-//     // activer mouvement
-//     if (gamma > gammaMove)
-//         moveRight = true;
-//     if (gamma < -gammaMove)
-//         moveLeft = true;
-//     if (beta < betaForwMove)
-//         moveForward = true;
-//     if (beta > betaBackMove)
-//         moveBack = true;
-//     // desactiver mouvement
-//     if (gamma < gammaMove)
-//         moveRight = false;
-//     if (gamma > -gammaMove)
-//         moveLeft = false;
-//     if (beta > betaForwMove)
-//         moveForward = false;
-//     if (beta < betaBackMove)
-//         moveBack = false;
-// }
