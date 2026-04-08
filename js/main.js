@@ -32,7 +32,6 @@ const bgSprite = new Image();
 bgSprite.src = "img/platforms.png";
 const bgImg = new Image();
 bgImg.src = "img/backgroundImg.png";
-bgImg.opacity = 0.1;
 let bgSpritex = 0;
 let bgSpritey = 0;
 let bgSpriteSizex = 2500;
@@ -45,7 +44,7 @@ let px = 100;
 let py = H - 150 - pHeight;
 let gammaMove = 20;
 const jumpSound = new Audio('sounds/jump.mp3');
-jumpSound.volume = 0.25;
+jumpSound.volume = 0.90;
 
 // pixels player
 let ppx1 = 0;
