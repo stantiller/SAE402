@@ -39,7 +39,7 @@ let bgSpriteSizey = H;
 let pHeight = 95;
 let pWidth = 55;
 let px = 100;
-let py = H - 100 - pHeight;
+let py = H - 150 - pHeight;
 let gammaMove = 20;
 
 // pixels player
@@ -281,7 +281,7 @@ function initGame()
 
     // position player
     px = 100;
-    py = H - 100 - pHeight;
+    py = H - 150 - pHeight;
 
     // pixels player
     bottomLeftPx = 0;
