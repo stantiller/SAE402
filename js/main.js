@@ -30,6 +30,9 @@ const bgCollisions = new Image();
 bgCollisions.src = "img/hitboxBackground.png";
 const bgSprite = new Image();
 bgSprite.src = "img/platforms.png";
+const bgImg = new Image();
+bgImg.src = "img/test.png";
+bgImg.opacity = 0.1;
 let bgSpritex = 0;
 let bgSpritey = 0;
 let bgSpriteSizex = 2500;
@@ -428,6 +431,7 @@ function affichageSprites()
     ctxPlayZone.clearRect(0, 0, W, H);
 
     // fond
+    ctxPlayZone.drawImage(bgImg, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
     ctxPlayZone.drawImage(bgSprite, bgSpritex, bgSpritey, bgSpriteSizex, bgSpriteSizey);
 
     // box
