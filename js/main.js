@@ -31,7 +31,7 @@ bgCollisions.src = "img/hitboxBackground.png";
 const bgSprite = new Image();
 bgSprite.src = "img/platforms.png";
 const bgImg = new Image();
-bgImg.src = "img/test.png";
+bgImg.src = "img/backgroundImg.png";
 bgImg.opacity = 0.1;
 let bgSpritex = 0;
 let bgSpritey = 0;
@@ -44,6 +44,8 @@ let pWidth = 55;
 let px = 100;
 let py = H - 150 - pHeight;
 let gammaMove = 20;
+const jumpSound = new Audio('sounds/jump.mp3');
+jumpSound.volume = 0.25;
 
 // pixels player
 let ppx1 = 0;
@@ -394,7 +396,12 @@ function game() {
     window.requestAnimationFrame(game);
 }
 
-game();
+function playSound(sound)
+{
+    sound.pause();
+    sound.load();
+    sound.play();
+}
 
 function variablesTemps(){
     t1 = performance.now();
@@ -536,6 +543,7 @@ function initJump()
 {
     if (pvy == 0){
         pvy = -aJump;  // Impulsion de saut fixe (indépendante du dt)
+        playSound(jumpSound);
     }
 }
 
@@ -554,9 +562,10 @@ function bumper()
         bottomLeftSidePx[2]    == 0 ||
         bottomRightSidePx[0]   == 255 &&
         bottomRightSidePx[1]   == 255 && 
-        bottomRightSidePx[2]   == 0)
-    )
+        bottomRightSidePx[2]   == 0)){
     pvy = -bumpJump;
+    playSound(jumpSound);
+    }
 }
 
 function player()
@@ -606,7 +615,7 @@ function player()
         if (py < 0)
             pvy = pay * dt;
         else
-            pvy += pay * dt;
+            pvy += Math.ceil(pay * dt);
     }
     else if (pvy > 0){
         pvy = 0;
@@ -641,7 +650,7 @@ function player()
         }
     }
 
-    py += pvy * dt;
+    py += Math.ceil(pvy * dt);
 
     playerMove();
 }
@@ -666,7 +675,7 @@ function box()
     boxpx > W || 
     boxpx < 0 || 
     (boxpy + boxHeight) >= H)){
-        boxvy += boxay * dt;
+        boxvy += Math.ceil(boxay * dt);
     }
     else if (boxvy > 0){
         boxvy = 0;
@@ -692,7 +701,7 @@ function box()
         }
     }
 
-    boxpy += boxvy * dt;
+    boxpy += Math.ceil(boxvy * dt);
 
     if (moveRight == true && bgSpritex > - bgSpriteSizex + W + 10 && moveRight == true && px >= 100){
         // px += pvx * dt;
