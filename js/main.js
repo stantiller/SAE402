@@ -614,7 +614,7 @@ function player()
         if (py < 0)
             pvy = pay * dt;
         else
-            pvy += Math.ceil(pay * dt);
+            pvy += Math.round(pay * dt);
     }
     else if (pvy > 0){
         pvy = 0;
@@ -649,7 +649,7 @@ function player()
         }
     }
 
-    py += Math.ceil(pvy * dt);
+    py += pvy * dt;
 
     playerMove();
 }
@@ -674,7 +674,7 @@ function box()
     boxpx > W || 
     boxpx < 0 || 
     (boxpy + boxHeight) >= H)){
-        boxvy += Math.ceil(boxay * dt);
+        boxvy += Math.round(boxay * dt);
     }
     else if (boxvy > 0){
         boxvy = 0;
@@ -700,7 +700,7 @@ function box()
         }
     }
 
-    boxpy += Math.ceil(boxvy * dt);
+    boxpy += Math.round(boxvy * dt);
 
     if (moveRight == true && bgSpritex > - bgSpriteSizex + W + 10 && moveRight == true && px >= 100){
         // px += pvx * dt;
