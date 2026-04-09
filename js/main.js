@@ -721,8 +721,6 @@ function playerControl(event)
     let gamma = event.gamma;
     let beta = event.beta;
 
-    // console.log(gamma, beta);
-
     // activer mouvement
     if (gamma > gammaMove)
         moveRight = true;
@@ -852,7 +850,6 @@ function playerMove()
         bgSpritex -= pvx * dt;
     }
     else if (moveRight == true && bgSpritex <= - bgSpriteSizex + W + 10 || moveRight == true && px < 100){
-        // console.log("tf", px, W - pWidth);
         if (px < W - pWidth)
             px += pvx * dt;
         else
